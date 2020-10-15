@@ -10,7 +10,9 @@ module.exports = {
         repoLabel: 'My GitHub',
         nav: [
             { text: 'Home', link: '/' },
-            { text: 'FirstBlog', link: '/blog/FirstBlog.md' }
+            { text: 'FirstBlog', link: '/blog/' },
+			{ text: 'faceSutra', link: '/faceSutra/' },
+			{ text: 'leetcode', link: '/leetcode/' }
         ],
 		sidebarDepth: 2
     },
