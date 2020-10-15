@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>JVM进程正常退出 | Cola</title>
+    <meta name="generator" content="VuePress 1.7.0">
+    
+    <meta name="description" content="Cola Cat">
+    
+    <link rel="preload" href="/cola/assets/css/0.styles.e9c3964e.css" as="style"><link rel="preload" href="/cola/assets/js/app.4c449854.js" as="script"><link rel="preload" href="/cola/assets/js/2.972928f3.js" as="script"><link rel="preload" href="/cola/assets/js/8.6b791e8e.js" as="script"><link rel="prefetch" href="/cola/assets/js/3.23aa7675.js"><link rel="prefetch" href="/cola/assets/js/4.d1b1528e.js"><link rel="prefetch" href="/cola/assets/js/5.e9d295c5.js"><link rel="prefetch" href="/cola/assets/js/6.b5fea630.js"><link rel="prefetch" href="/cola/assets/js/7.f5bf767c.js">
+    <link rel="stylesheet" href="/cola/assets/css/0.styles.e9c3964e.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container no-sidebar"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/cola/" class="home-link router-link-active"><!----> <span class="site-name">Cola</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/cola/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/cola/blog/FirstBlog.html" aria-current="page" class="nav-link router-link-exact-active router-link-active">
+  FirstBlog
+</a></div> <a href="https://github.com/github-lig/cola" target="_blank" rel="noopener noreferrer" class="repo-link">
+    My GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/cola/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/cola/blog/FirstBlog.html" aria-current="page" class="nav-link router-link-exact-active router-link-active">
+  FirstBlog
+</a></div> <a href="https://github.com/github-lig/cola" target="_blank" rel="noopener noreferrer" class="repo-link">
+    My GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav>  <!----> </aside> <main class="page"> <div class="theme-default-content content__default"><h3 id="jvm进程正常退出"><a href="#jvm进程正常退出" class="header-anchor">#</a> JVM进程正常退出</h3> <p>​	1. 调用System.exit() 或者 Runtime.exit()</p> <p>​	2. 所有非daemon线程完全终止</p> <h4 id="如何保证一个进程不结束"><a href="#如何保证一个进程不结束" class="header-anchor">#</a> 如何保证一个进程不结束</h4> <p>​	保证至少一个非daemon线程一直在运行</p> <p>​	参考springboot启动tomcat服务</p> <div class="language- extra-class"><pre class="language-text"><code>private void startDaemonAwaitThread() {
+    Thread awaitThread = new Thread(&quot;container-&quot; + containerCounter.get()) {
+        public void run() {
+            TomcatWebServer.this.tomcat.getServer().await();
+        }
+    };
+    awaitThread.setContextClassLoader(this.getClass().getClassLoader());
+    awaitThread.setDaemon(false);
+    awaitThread.start();
+}
+</code></pre></div><p>在await方法中执行下述逻辑</p> <div class="language- extra-class"><pre class="language-text"><code>if (this.getPortWithOffset() == -1) {
+	try {
+		this.awaitThread = Thread.currentThread();
+		while(!this.stopAwait) {
+			try {
+				Thread.sleep(10000L);
+			} catch (InterruptedException var64) {}
+		}
+	} finally {
+		this.awaitThread = null;
+	}
+
+}
+</code></pre></div><h3 id="阻塞队列-非阻塞队列"><a href="#阻塞队列-非阻塞队列" class="header-anchor">#</a> 阻塞队列 &amp; 非阻塞队列</h3> <h4 id="阻塞队列"><a href="#阻塞队列" class="header-anchor">#</a> 阻塞队列</h4> <p>​		阻塞队列多是通过ReentrantLock来实现线程安全性（lock&amp;&amp;unlock）和阻塞（Condition）的特性。阻塞特性体现在调用put和take方法时，如果队列已满，那么put会被阻塞，当队列有空余空间时唤醒并返回，如果队列无元素，那么take会被阻塞，当队列添加了新元素时被唤醒并返回。</p> <h5 id="常用的阻塞队列"><a href="#常用的阻塞队列" class="header-anchor">#</a> 常用的阻塞队列</h5> <ul><li><p>LinkedBlockingQueue ：基于链表实现的有界阻塞队列</p></li> <li><p>ArrayBlockingQueue ：基于数组实现的有界阻塞队列</p></li> <li><p>PriorityBlockingQueue：基于优先级的无界阻塞队列</p></li> <li><p>DelayQueue：基于优先级队列实现的延迟队列</p></li> <li><p>SynchronousQueue：不存储元素的阻塞队列</p></li> <li><p>LinkedTransferQueue：链表结构的无界阻塞队列</p></li> <li><p>LinkedBlockingDeque：链表结构的双向阻塞队列</p></li></ul> <h5 id="说明"><a href="#说明" class="header-anchor">#</a> 说明</h5> <ul><li><p>​	有界、无界：除了SynchronousQueue队列明确是有界的，其他队列在于有无设置队列大小，如果未设置，默认为Integer.MAX_VALUE，相当于是无界队列。PriorityBlockingQueue即使设置了队列大小，当队列满时，也会进行扩容</p></li> <li><p>LinkedBlockingQueue和ArrayBlockingQueue区别</p></li> <li><p>LinkedBlockingQueue 基于链表实现，动态内存、不指定大小时，默认为Integer.MAX_VALUE。生产和消费使用不同Lock锁</p></li> <li><p>ArrayBlockingQueue基于数组实现，必须指定大小，固定内存，生产和消费使用同一个锁</p></li> <li><p>吞吐量上lbq更高一些，但是在内存分配、回收上，abq性能要差一些</p></li></ul> <h4 id="非阻塞队列"><a href="#非阻塞队列" class="header-anchor">#</a> 非阻塞队列</h4> <ul><li>ConcurrentLinkedQueue：线程安全的、非阻塞的、基于链表实现、无界的队列</li></ul> <h3 id="comparable和comparator"><a href="#comparable和comparator" class="header-anchor">#</a> Comparable和Comparator</h3> <ul><li>实现Comparable接口，代表该类支持排序</li> <li>Comparator 是比较器接口，如果需要控制某个类的排序，且该类不支持排序，可以实现一个该类的比较器</li></ul> <h3 id="mysql"><a href="#mysql" class="header-anchor">#</a> mysql</h3> <h4 id="sql执行过程"><a href="#sql执行过程" class="header-anchor">#</a> sql执行过程</h4> <ul><li>查询缓存</li> <li>解析和预处理
+<ul><li>通过关键字将sql解析，生成解析树。Mysql解析器将使用Mqsql语法规则验证和解析查询。</li> <li>预处理则根据一些MySQL规则进行进一步检查解析树是否合法，例如检查数据表和数据列是否存在。</li></ul></li> <li>查询优化</li> <li>执行引擎</li></ul> <h4 id="脏页"><a href="#脏页" class="header-anchor">#</a> 脏页</h4> <p>当内存数据页与磁盘数据页数据不一致时，这个内存页称为脏页</p> <h3 id="动态代理"><a href="#动态代理" class="header-anchor">#</a> 动态代理</h3> <blockquote><p>动态代理中所说的“动态”，是针对使用Java代码编写了代理类的“静态“代理而言的，它的优势不在于省去了编写代理类那一点编码工作量，而是实现了可以在原始类和接口还未知的情况下，就确定了代理类的行为，当代理类与原始类脱离了直接联系后，就可以很灵活的重用于不同的应用场景之中。</p></blockquote> <h3 id="threadgroup"><a href="#threadgroup" class="header-anchor">#</a> ThreadGroup</h3> <p>线程组层级：system-&gt;main-&gt;userGroup（应用程序创建的组）</p> <p>可以通过线程组管理某些具有特定功能的线程。可以通过线程组对组内线程进行中断等操作</p> <h3 id="二进制安全"><a href="#二进制安全" class="header-anchor">#</a> 二进制安全</h3> <p>只关心二进制的字符串，不关心具体的格式，只会严格的按照二进制的数据存取，不会妄图以某种特殊格式解析数据</p> <h3 id="locksupport"><a href="#locksupport" class="header-anchor">#</a> LockSupport</h3></div> <footer class="page-edit"><!----> <!----></footer> <!----> </main></div><div class="global-ui"></div></div>
+    <script src="/cola/assets/js/app.4c449854.js" defer></script><script src="/cola/assets/js/2.972928f3.js" defer></script><script src="/cola/assets/js/8.6b791e8e.js" defer></script>
+  </body>
+</html>
